@@ -35,7 +35,7 @@ const __getFiliais = () => {
 
     loading.start();
 
-    fetch("http://localhost:8080/MithraAPI/mithra/v1/search", {
+    fetch("https://api.mithra.com.br/mithra/v1/search", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -97,7 +97,7 @@ const __getItens = () => {
 
     loading.start();
 
-    fetch("http://localhost:8080/MithraAPI/mithra/v1/search", {
+    fetch("https://api.mithra.com.br/mithra/v1/earch", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -161,7 +161,7 @@ const __save = () => {
 
     let json = { area: 'ESTLOJ', data: data };
 
-    fetch("http://localhost:8080/MithraAPI/mithra/v1/template", {
+    fetch("https://api.mithra.com.br/mithra/v1/template", {
         method: "POST",
         body: JSON.stringify(json),
         headers: {
@@ -174,7 +174,7 @@ const __save = () => {
         return response.json()
     }).then(json => {
         console.log(json);
-    });
+    }).finally(() => loading.complete());
 }
 
 const __main = () => {
