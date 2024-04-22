@@ -184,4 +184,4 @@ const __main = () => {
 sendButton.addEventListener('click', () => __save());
 companySelector.addEventListener('change', () => __getItens());
 
-__main();
+//__main();
