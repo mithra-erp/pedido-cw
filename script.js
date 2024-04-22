@@ -177,7 +177,7 @@ const __save = () => {
     });
 }
 
-const __onLoad = () => {
+const __main = () => {
     let test = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLm1pdGhyYS5jb20uYnJcL21hbmFnZXIiLCJpYXQiOjE3MTM4MjYyMTksImV4cCI6MTcxMzgyOTgxOSwiYXVkIjoiOTI3MDZiYTQtZmQzMC0yMmNlLWRlNmQtMTYxMGIxN2EwZDJkIiwidUlkIjoibWl0aHJhIiwicm9sZXMiOlsiQURNSU4iXX0.wjFfD7mwZOcyw7EzI3waoF9w7XFgDj3-01vfP94kXS8"
     sessionStorage.setItem('access_token', test);
     __getFiliais();
@@ -186,4 +186,4 @@ const __onLoad = () => {
 sendButton.addEventListener('click', () => __save());
 companySelector.addEventListener('change', () => __getItens());
 
-__onLoad();
+__main();
