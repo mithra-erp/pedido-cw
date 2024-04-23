@@ -177,13 +177,17 @@ const __save = () => {
             "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
             "Content-Type": "application/json"
         }
-    }).then(response => {
-        console.log(response)
-        return response.json()
-    }).then(json => {
-        alert(json.message)
-        console.log(json);
-    }).finally(() => loading.complete());
+    })
+        .then(response => {
+            console.log(response)
+            return response.json()
+        })
+        .then(json => {
+            alert(json.message)
+            console.log(json);
+        })
+        .catch((error) => alert(error))
+        .finally(() => loading.complete());
 }
 
 const __main = () => {
