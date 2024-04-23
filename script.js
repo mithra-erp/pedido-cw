@@ -167,7 +167,9 @@ const __save = () => {
 
     loading.start();
 
-    let json = { area: 'ESTLOJ', data: data };
+    let json = [{ area: 'ESTLOJ', data: data }];
+    
+    alert(JSON.stringify(json));
 
     fetch("https://api.mithra.com.br/mithra/v1/template", {
         method: "POST",
