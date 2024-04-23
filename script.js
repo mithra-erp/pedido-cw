@@ -129,23 +129,13 @@ const __getItens = () => {
                 row = document.createElement('div');
                 row.classList.add('row');
 
-                let col2 = document.createElement('div');
-                col2.classList.add('col')
-                col2.innerHTML = item.MINIMO;
-                row.appendChild(col2);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Minimo</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.MINIMO}' disabled readonly></div>`);
 
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Contagem</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.SALDO}' disabled readonly></div>`);
 
-                let col3 = document.createElement('div');
-                col3.classList.add('col')
-                col3.innerHTML = item.SALDO;
-                row.appendChild(col3);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
 
-                let col4 = document.createElement('div');
-                col4.classList.add('col')
-                col4.innerHTML = item.SUGESTAO;
-                row.appendChild(col4);
-
-                row.insertAdjacentHTML('beforeend', `<div class='col'><input class="form-control sku" type="number" data-code="${item.CODIGO}" placeholder="Default input" aria-label="default input example" value='${item.PEDIDO}'></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control sku" type="number" data-code="${item.CODIGO}" placeholder="Default input" aria-label="default input example" value='${item.PEDIDO}'></div>`);
 
                 container.appendChild(row);
             });
@@ -199,4 +189,3 @@ const __main = () => {
 sendButton.addEventListener('click', () => __save());
 companySelector.addEventListener('change', () => __getItens());
 
-//__main();
