@@ -52,8 +52,12 @@ const __getFiliais = () => {
             json.data.forEach(item => {
                 document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}">${item.ALIAS}</option>`);
             });
+        } else {
+            alert(json.message)
         }
-    }).finally(() => loading.complete());
+    })
+    .catch((error) => alert(error))
+    .finally(() => loading.complete());
 }
 
 const __getItens = () => {
