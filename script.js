@@ -56,8 +56,8 @@ const __getFiliais = () => {
             alert(json.message)
         }
     })
-    .catch((error) => alert(error))
-    .finally(() => loading.complete());
+        .catch((error) => alert(error))
+        .finally(() => loading.complete());
 }
 
 const __getItens = () => {
@@ -149,8 +149,12 @@ const __getItens = () => {
 
                 container.appendChild(row);
             });
+        } else {
+            alert(json.message)
         }
-    }).finally(() => loading.complete());
+    })
+        .catch((error) => alert(error))
+        .finally(() => loading.complete());
 }
 
 const __save = () => {
@@ -160,7 +164,7 @@ const __save = () => {
         data.push({ DATA: currentDate, CODIGO: item.getAttribute('data-code'), SALDO: item.value, FILIAL: companySelector.value });
     })
     console.log(data);
-    
+
     loading.start();
 
     let json = { area: 'ESTLOJ', data: data };
