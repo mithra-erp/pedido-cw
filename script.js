@@ -101,7 +101,7 @@ const __getItens = () => {
 
     loading.start();
 
-    fetch("https://api.mithra.com.br/mithra/v1/earch", {
+    fetch("https://api.mithra.com.br/mithra/v1/search", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
