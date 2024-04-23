@@ -39,7 +39,7 @@ const __getFiliais = () => {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
-            "X-Client-Id": "MDMwMTY1MTUwMDEyMjA=",
+            "X-Client-Id": sessionStorage.getItem('x-client-id'),
             "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
             "Content-Type": "application/json"
         }
@@ -105,7 +105,7 @@ const __getItens = () => {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
-            "X-Client-Id": "MDMwMTY1MTUwMDEyMjA=",
+            "X-Client-Id": sessionStorage.getItem('x-client-id'),
             "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
             "Content-Type": "application/json"
         }
@@ -173,7 +173,7 @@ const __save = () => {
         method: "POST",
         body: JSON.stringify(json),
         headers: {
-            "X-Client-Id": "MDMwMTY1MTUwMDEyMjA=",
+            "X-Client-Id": sessionStorage.getItem('x-client-id'),
             "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
             "Content-Type": "application/json"
         }
@@ -181,6 +181,7 @@ const __save = () => {
         console.log(response)
         return response.json()
     }).then(json => {
+        alert(json.message)
         console.log(json);
     }).finally(() => loading.complete());
 }
