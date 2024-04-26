@@ -11,21 +11,19 @@
 </head>
 
 <body>
-    <div id="app" class="mt-2">
-    </div>
-    <a href="pedido.html" class="btn btn-primary"
-        style="width: 60px; height: 60px; border-radius: 50px; box-shadow: 2px 2px 3px #999; position:fixed; bottom:10px; right:10px;"><i
-            class="fa fa-plus" style="margin-top:15px;"></i></a>
+    <div class="container">
+        <div id="app" class="mt-2"> </div>
 
+        <a href="pedido.html" class="btn btn-primary"
+            style="width: 60px; height: 60px; border-radius: 50px; box-shadow: 2px 2px 3px #999; position:fixed; bottom:40px; right:40px;"><i
+                class="fa fa-plus" style="margin-top:15px;"></i></a>
+    </div>
     <template id="card-row-template">
         <div class="card m-2">
             <div class="card-header">
                 <div class="row">
-                    <div class="col-10">
+                    <div class="col-12">
                         <span id="id"></span>
-                    </div>
-                    <div class="col-2">
-                        <span id="status" class="badge"></span>
                     </div>
                 </div>
             </div>
@@ -37,6 +35,9 @@
                             <span id="filial"></span>
                             <span id="alias"></span>
                         </p>
+                    </div>
+                    <div class="col-auto">
+                        <span id="status" class="badge"></span>
                     </div>
                 </div>
                 <div class="row">
