@@ -2,16 +2,6 @@ const container = document.querySelector("#grid");
 const sendButton = document.querySelector('#sendButton');
 const companySelector = document.querySelector("#filial");
 
-const loading = {
-    start: function () {
-        document.body.insertAdjacentHTML('beforeend', '<div id="loading" class="loading">LOADING</div>');
-    },
-    complete: function () {
-        var loading = document.getElementById("loading");
-        loading.remove(loading);
-    }
-};
-
 const __getFiliais = () => {
     let data = {
         "area": "EMPRES",
@@ -148,6 +138,8 @@ const __getItens = () => {
 }
 
 const __save = () => {
+    if (companySelector.value == '') return;
+
     let currentDate = new Date().toJSON().slice(0, 10).replaceAll('-', '');
     let data = [];
     document.querySelectorAll(".sku").forEach(item => {
@@ -158,7 +150,7 @@ const __save = () => {
     loading.start();
 
     let json = [{ area: 'ESTLOJ', data: data }];
-    
+
     alert(JSON.stringify(json));
 
     fetch("https://api.mithra.com.br/mithra/v1/template", {
@@ -189,3 +181,4 @@ const __main = () => {
 sendButton.addEventListener('click', () => __save());
 companySelector.addEventListener('change', () => __getItens());
 
+__main();
