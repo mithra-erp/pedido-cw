@@ -25,7 +25,7 @@ const __getFiliais = () => {
 
     loading.start();
 
-    fetch("https://api.mithra.com.br/mithra/v1/search", {
+    fetch(Constants.PRODUCTION_URL +  "/v1/search", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
