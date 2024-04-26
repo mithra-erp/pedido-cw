@@ -1,7 +1,6 @@
 const template = document.querySelector("#card-row-template");
+const dataPedido = document.querySelector("#data-pedido");
 const app = document.querySelector("#app");
-
-let currentDate = new Date().toJSON().slice(0, 10).replaceAll("-", "");
 
 const __main = () => __getItens();
 
@@ -35,12 +34,12 @@ const __getItens = () => {
             {
                 "field": "DATA",
                 "operation": "GREATER_OR_EQUAL_THAN",
-                "value": currentDate
+                "value": dataPedido.value.replaceAll("-", "")
             },
             {
                 "field": "DATA",
                 "operation": "LESS_OR_EQUAL_THAN",
-                "value": currentDate
+                "value": dataPedido.value.replaceAll("-", "")
             },
             {
                 "field": "ESTLOJ.PEDIDO",
@@ -71,6 +70,7 @@ const __getItens = () => {
     }).then(json => {
         if (json.success) {
             console.log(json)
+            app.innerHTML = '';
             json.data.forEach(item => {
                 const clone = template.content.cloneNode(true);
                 const status = clone.querySelector("#status")
@@ -99,6 +99,9 @@ const __getItens = () => {
                         break;
                 }
 
+                clone.querySelector("div").setAttribute('data-id', item.IDENTIFICADOR);
+                clone.querySelector("div").setAttribute('data-status', item.STATUS);
+
                 app.appendChild(clone);
             });
         } else {
@@ -107,6 +110,82 @@ const __getItens = () => {
     })
         .catch((error) => alert(error))
         .finally(() => loading.complete());
+
+    setTimeout(() => {
+        updateData();
+    }, 10000);
 }
+
+const updateData = () => {
+    const cards = document.querySelectorAll("div[data-status='FINALI']");
+    console.log(cards.length)
+    if (cards.length > 0) {
+        let data = {
+            "area": "ESTLOJ",
+            "fields": [
+                "ESTLOJ.STATUS",
+                "ESTLOJ.IDENTIFICADOR"
+            ],
+            "search": [
+                {
+                    "field": "DATA",
+                    "operation": "GREATER_OR_EQUAL_THAN",
+                    "value": dataPedido.value.replaceAll("-", "")
+                },
+                {
+                    "field": "DATA",
+                    "operation": "LESS_OR_EQUAL_THAN",
+                    "value": dataPedido.value.replaceAll("-", "")
+                },
+                {
+                    "field": "STATUS",
+                    "operation": "EQUAL_TO",
+                    "value": "TRANSM"
+                }
+            ],
+            "group_by": [
+                "FILIAL",
+                "DATA",
+                "IDENTIFICADOR"
+            ]
+        }
+
+        let options = {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: {
+                "X-Client-Id": sessionStorage.getItem('x-client-id'),
+                "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
+                "Content-Type": "application/json"
+            }
+        };
+
+        fetch(Constants.PRODUCTION_URL + "/v1/search", options)
+            .then(response => {
+                console.log(response)
+                return response.json()
+            })
+            .then(json => {
+                if (json.success) {
+                    console.log(json)
+                    json.data.forEach(item => {
+                        document.querySelector(`[data-id="${item.IDENTIFICADOR}"]`).querySelector("#status").innerHTML = item.STATUS;
+                    });
+                } else {
+                    console.log(json.message)
+                }
+            })
+            .catch((error) => console.log(error))
+            .finally(() => {
+                setTimeout(() => {
+                    updateData();
+                }, 10000);
+            });
+    }
+}
+
+dataPedido.valueAsDate  = new Date();
+
+dataPedido.addEventListener('change', () => __main() );
 
 //__main()
