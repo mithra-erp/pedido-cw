@@ -10,31 +10,62 @@
     <link href="loading.css" rel="stylesheet">
 </head>
 
-<body class="mt-2">
-    <div id="app">
+<body>
+    <div id="app" class="mt-2">
     </div>
-    <div class="d-flex sticky-bottom">
-        <a href="pedido.html" class="btn btn-primary ms-auto p-2 m-2"
-            style="width: 70px; height: 70px; border-radius: 50%;">ADD</a>
-    </div>
-    
+    <a href="pedido.html" class="btn btn-primary"
+        style="width: 60px; height: 60px; border-radius: 50px; box-shadow: 2px 2px 3px #999; position:fixed; bottom:10px; right:10px;"><i
+            class="fa fa-plus" style="margin-top:15px;"></i></a>
+
     <template id="card-row-template">
         <div class="card m-2">
             <div class="card-header">
-              Featured
+                <div class="row">
+                    <div class="col-10">
+                        <span id="id"></span>
+                    </div>
+                    <div class="col-2">
+                        <span id="status" class="badge"></span>
+                    </div>
+                </div>
             </div>
-            <div class="card-body"></div>
-            <div class="card-footer text-body-secondary">
-              2 days ago
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <label class="fw-bolder">Filial</label>
+                        <p class="fw-light mb-0">
+                            <span id="filial"></span>
+                            <span id="alias"></span>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label class="fw-bolder">Data</label>
+                        <p class="fw-light mb-0">
+                            <span id="data"></span>
+                        </p>
+                    </div>
+                    <div class="col-auto">
+                        <label class="fw-bolder">Valor</label>
+                        <p class="fw-light mb-0">
+                            <span id="total"></span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     </template>
+
     <!--
     <script>
         sessionStorage.setItem('access_token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLm1pdGhyYS5jb20uYnJcL21hbmFnZXIiLCJpYXQiOjE3MTQxNDgzMzAsImV4cCI6MTcxNDE2MjczMCwiYXVkIjoiOTI3MDZiYTQtZmQzMC0yMmNlLWRlNmQtMTYxMGIxN2EwZDJkIiwidUlkIjoibWl0aHJhIiwicm9sZXMiOlsiQURNSU4iXX0.2RFhmsQkPhhSbvDnOLqpd0fbx6adW64HHcmChzYHCV8');
         sessionStorage.setItem('x-client-id', 'MDMwMTY1MTUwMDEyMjA=');
     </script>
     -->
+
+    <script src="https://kit.fontawesome.com/2ca8e2b7ff.js" crossorigin="anonymous"></script>
+    <script src="src/constants.js"></script>
     <script src="src/util.js"></script>
     <script src="src/main.js"></script>
 </body>
