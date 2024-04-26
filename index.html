@@ -11,7 +11,10 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container pt-2">
+        <div class="form-group">
+            <input type="date" class="form-control" id="data-pedido" />
+        </div>
         <div id="app" class="mt-2" style="margin-bottom: 110px;"> </div>
 
         <a href="pedido.html" class="btn btn-primary"
@@ -19,7 +22,7 @@
                 class="fa fa-plus" style="margin-top:15px;"></i></a>
     </div>
     <template id="card-row-template">
-        <div class="card m-2">
+        <div class="card my-2">
             <div class="card-header">
                 <div class="row">
                     <div class="col-12">
@@ -58,12 +61,10 @@
         </div>
     </template>
 
-    <!--
     <script>
-        sessionStorage.setItem('access_token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLm1pdGhyYS5jb20uYnJcL21hbmFnZXIiLCJpYXQiOjE3MTQxNDgzMzAsImV4cCI6MTcxNDE2MjczMCwiYXVkIjoiOTI3MDZiYTQtZmQzMC0yMmNlLWRlNmQtMTYxMGIxN2EwZDJkIiwidUlkIjoibWl0aHJhIiwicm9sZXMiOlsiQURNSU4iXX0.2RFhmsQkPhhSbvDnOLqpd0fbx6adW64HHcmChzYHCV8');
+        sessionStorage.setItem('access_token', 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczpcL1wvYXBpLm1pdGhyYS5jb20uYnJcL21hbmFnZXIiLCJpYXQiOjE3MTQxNjI4MDYsImV4cCI6MTcxNDE3NzIwNiwiYXVkIjoiOTI3MDZiYTQtZmQzMC0yMmNlLWRlNmQtMTYxMGIxN2EwZDJkIiwidUlkIjoiTUlUSFJBIiwicm9sZXMiOlsiQURNSU4iXX0.8eID9Dm6BKNZYgcBOriK6r10-VgaJBj2Fa1vk7PRQEY');
         sessionStorage.setItem('x-client-id', 'MDMwMTY1MTUwMDEyMjA=');
     </script>
-    -->
 
     <script src="https://kit.fontawesome.com/2ca8e2b7ff.js" crossorigin="anonymous"></script>
     <script src="src/constants.js"></script>
