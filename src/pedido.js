@@ -169,6 +169,9 @@ const __save = () => {
         .then(json => {
             alert(json.message)
             console.log(json);
+            if (json.success) {
+                history.back();
+            }
         })
         .catch((error) => alert(error))
         .finally(() => loading.complete());
