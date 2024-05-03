@@ -119,7 +119,7 @@ const __getItens = () => {
 const updateData = () => {
     const cards = document.querySelectorAll("div[data-status='FINALI']");
     console.log(cards.length)
-    if (cards.length > 0) {
+    if (cards.length > 0) {        
         let data = {
             "area": "ESTLOJ",
             "fields": [
@@ -169,7 +169,9 @@ const updateData = () => {
                 if (json.success) {
                     console.log(json)
                     json.data.forEach(item => {
-                        document.querySelector(`[data-id="${item.IDENTIFICADOR}"]`).querySelector("#status").innerHTML = item.STATUS;
+                        let status = document.querySelector(`[data-id="${item.IDENTIFICADOR}"]`).querySelector("#status");
+                        status.classList.add("text-bg-success");
+                        status.innerHTML = "Transmitido";
                     });
                 } else {
                     console.log(json.message)

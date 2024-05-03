@@ -106,6 +106,11 @@ const __getItens = () => {
         container.innerHTML = '';
         if (json.success) {
             json.data.forEach(item => {
+                let card = document.createElement('div');
+                card.classList.add('card');
+                card.classList.add('p-2')
+                card.classList.add('mt-2')
+
                 let row = document.createElement('div');
                 row.classList.add('row');
 
@@ -114,20 +119,23 @@ const __getItens = () => {
                 col1.classList.add('fw-bold')
                 col1.innerHTML = item.DESCRICAO;
                 row.appendChild(col1);
-                container.appendChild(row);
+                card.appendChild(row);
 
                 row = document.createElement('div');
                 row.classList.add('row');
+                row.classList.add('sku');
+                row.setAttribute('data-code', item.CODIGO);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Minimo</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.MINIMO}' disabled readonly></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Minimo</label><input class="form-control minimo" type="number" placeholder="Default input" aria-label="default input example" value='${item.MINIMO}' disabled readonly></div>`);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Contagem</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.SALDO}' disabled readonly></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Contagem</label><input class="form-control saldo" type="number" placeholder="Default input" aria-label="default input example" value='${item.SALDO}' disabled readonly></div>`);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sku" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sugestao" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control sku" type="number" data-code="${item.CODIGO}" placeholder="Default input" aria-label="default input example" value='${item.PEDIDO}'></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Default input" aria-label="default input example" value='${item.PEDIDO}'></div>`);
 
-                container.appendChild(row);
+                card.appendChild(row);
+                container.appendChild(card);
             });
         } else {
             alert(json.message)
@@ -143,7 +151,15 @@ const __save = () => {
     let currentDate = new Date().toJSON().slice(0, 10).replaceAll('-', '');
     let data = [];
     document.querySelectorAll(".sku").forEach(item => {
-        data.push({ DATA: currentDate, CODIGO: item.getAttribute('data-code'), SALDO: item.value, FILIAL: companySelector.value });
+        data.push({ 
+            FILIAL: companySelector.value, 
+            DATA: currentDate, 
+            CODIGO: item.getAttribute('data-code'), 
+            PEDIDO: item.querySelector('.pedido').value, 
+            MINIMO: item.querySelector('.minimo').value, 
+            SUGESTAO: item.querySelector('.sugestao').value, 
+            SALDO: item.querySelector('.saldo').value, 
+        });
     })
     console.log(data);
 
@@ -154,7 +170,7 @@ const __save = () => {
     alert(JSON.stringify(json));
 
     fetch(Constants.PRODUCTION_URL + "/v1/template", {
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify(json),
         headers: {
             "X-Client-Id": sessionStorage.getItem('x-client-id'),
