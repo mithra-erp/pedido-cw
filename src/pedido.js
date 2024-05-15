@@ -388,8 +388,8 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
 });
 console.log(params);
-if (params.id !== undefined) {
-    console.log(params.id);
+if (params !== null && params.id !== undefined && params.id !== null) {
+    console.log('id', params.id);
     __getPedido(params.id);
 } else {
     __getFiliais();
