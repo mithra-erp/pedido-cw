@@ -169,6 +169,132 @@ const __getItens = () => {
         });
 }
 
+const __getPedido = (id) => {
+    
+    let data = {
+        "area": "PRODATAK A",
+        "join": [
+            {
+                "area": "PRODUT P",
+                "on": "P.CODIGO = A.PRODUTO"
+            },
+            {
+                "area": "ESTLOJ E",
+                "on": "E.DATA = DATE_FORMAT(CURDATE(), '%Y%m%d') AND E.CODIGO = P.CODIGO AND E.FILIAL = A.FILIAL",
+                "type": "LEFT"
+            },
+            {
+                "area": "EMPRES",
+                "on": "EMPRES.CODIGO = E.FILIAL",
+                "type": "LEFT"
+            },
+            {
+                "area": "TABATAK T",
+                "on": "T.CHAVE = EMPRES.LST_ATAK AND T.PRODUTO = P.CODATK",
+                "type": "LEFT"
+            }
+        ],
+        "fields": [
+            "EMPRES.CODIGO",
+            "EMPRES.ALIAS",
+            "E.IDENTIFICADOR",
+            "LPAD(ROW_NUMBER() OVER (ORDER BY A.ORDEM, A.GRUPO, P.DESCRICAO), 3, '0') AS ITEM",
+            "P.CODIGO",
+            "P.CODATK",
+            "P.QTCAIXA",
+            "IFNULL(IF(T.PRODUTO IN ('4032','3517'), 10, T.VALUNIT), 0) AS VALUNIT",
+            "P.DESCRICAO",
+            "CAST(IFNULL(E.MINIMO, 0) AS DECIMAL(20, 0)) AS MINIMO",
+            "CAST(IFNULL(E.SALDO, 0) AS DECIMAL(20, 0)) AS SALDO",
+            "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 0)) AS SUGESTAO",
+            "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 0)) AS PEDIDO",
+            "A.GRUPO",
+            "get_limite_filial(E.FILIAL) AS LIMITE"
+        ],
+        "search": [
+            {
+                "field": "E.IDENTIFICADOR",
+                "operation": "EQUAL_TO",
+                "value": id
+            },
+            {
+                "field": "E.PEDIDO",
+                "operation": "GREATER_THAN",
+                "value": 0
+            }
+        ]
+    }
+
+    loading.start();
+
+    fetch(Constants.PRODUCTION_URL + "/v1/search", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            "X-Client-Id": sessionStorage.getItem('x-client-id'),
+            "Authorization": "Bearer " + sessionStorage.getItem('access_token'),
+            "Content-Type": "application/json"
+        }
+    }).then(response => {
+        console.log(response)
+        return response.json()
+    }).then(json => {
+        container.innerHTML = '';
+        if (json.success) {            
+            companySelector.insertAdjacentHTML('beforeend', `<option value="${json.data[0].CODIGO}">${json.data[0].ALIAS}</option>`);
+            companySelector.selectedIndex = 1;
+            companySelector.setAttribute('disabled', true);
+            document.querySelector("#limite-filial").innerHTML = "Limite: " + parseFloat(json.data[0].LIMITE).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+            });
+
+            identificador = json.data[0].IDENTIFICADOR;
+
+            json.data.forEach(item => {
+                let card = document.createElement('div');
+                card.classList.add('card');
+                card.classList.add('p-2')
+                card.classList.add('mt-2')
+
+                let row = document.createElement('div');
+                row.classList.add('row');
+
+                let col1 = document.createElement('div');
+                col1.classList.add('col')
+                col1.classList.add('fw-bold')
+                col1.innerHTML = item.DESCRICAO;
+                row.appendChild(col1);
+                card.appendChild(row);
+
+                row = document.createElement('div');
+                row.classList.add('row');
+                row.classList.add('sku');
+                row.setAttribute('data-code', item.CODIGO);
+
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Minimo</label><input class="form-control minimo" type="number" placeholder="Default input" aria-label="default input example" value='${item.MINIMO}' disabled readonly></div>`);
+
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Contagem</label><input class="form-control saldo" type="number" placeholder="Default input" aria-label="default input example" value='${item.SALDO}' disabled readonly></div>`);
+
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sugestao" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
+
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Pedido" aria-label="default input example" value='${item.PEDIDO}'  pattern="[0-9]*" inputmode="numeric" min="0" step="1" disabled readonly data-qtcaixa='${item.QTCAIXA}' data-valunit='${item.VALUNIT}'></div>`);
+
+                card.appendChild(row);
+                container.appendChild(card);
+            });
+            
+        } else {
+            alert(json.message)
+            history.back();
+        }
+    }).catch((error) => alert(error))
+        .finally(() => {
+            updateBill();
+            loading.complete();
+        });
+}
+
 const __save = () => {
     if (companySelector.value == '') return;
 
@@ -258,4 +384,14 @@ sendButton.addEventListener('click', () => {
 });
 companySelector.addEventListener('change', () => __getItens());
 
-__getFiliais();
+const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+});
+console.log(params);
+if (params.id !== undefined) {
+    console.log(params.id);
+    __getPedido(params.id);
+} else {
+    __getFiliais();
+}
+
