@@ -89,7 +89,7 @@ const __getItens = () => {
                     { minimumFractionDigits: 2 }
                 );
 
-                clone.querySelector("a").setAttribute('href', '/pedido.html?id=' + item.IDENTIFICADOR);
+                clone.querySelector("a").setAttribute('href', 'pedido.html?id=' + item.IDENTIFICADOR);
 
                 switch (item.STATUS) {
                     case "TRANSM":
