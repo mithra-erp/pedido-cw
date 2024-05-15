@@ -89,6 +89,8 @@ const __getItens = () => {
                     { minimumFractionDigits: 2 }
                 );
 
+                clone.querySelector("a").setAttribute('href', '/pedido.html?id=' + item.IDENTIFICADOR);
+
                 switch (item.STATUS) {
                     case "TRANSM":
                         status.classList.add("text-bg-success");

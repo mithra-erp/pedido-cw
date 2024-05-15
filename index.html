@@ -23,45 +23,46 @@
                 class="fa fa-plus" style="margin-top:15px;"></i></a>
     </div>
     <template id="card-row-template">
-        <div class="card my-2">
-            <div class="card-header">
-                <div class="row">
-                    <div class="col-12">
-                        <span id="id"></span>
+        <a>
+            <div class="card my-2">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-12">
+                            <span id="id"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <label class="fw-bolder">Filial</label>
+                            <p class="fw-light mb-0">
+                                <span id="filial"></span>
+                                <span id="alias"></span>
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <span id="status" class="fs-6 badge"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label class="fw-bolder">Data</label>
+                            <p class="fw-light mb-0">
+                                <span id="data"></span>
+                            </p>
+                        </div>
+                        <div class="col-auto">
+                            <label class="fw-bolder">Valor</label>
+                            <p class="fw-light mb-0">
+                                <span id="total"></span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col">
-                        <label class="fw-bolder">Filial</label>
-                        <p class="fw-light mb-0">
-                            <span id="filial"></span>
-                            <span id="alias"></span>
-                        </p>
-                    </div>
-                    <div class="col-auto">
-                        <span id="status" class="fs-6 badge"></span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <label class="fw-bolder">Data</label>
-                        <p class="fw-light mb-0">
-                            <span id="data"></span>
-                        </p>
-                    </div>
-                    <div class="col-auto">
-                        <label class="fw-bolder">Valor</label>
-                        <p class="fw-light mb-0">
-                            <span id="total"></span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </a>
     </template>
-
 
     <script src="https://kit.fontawesome.com/2ca8e2b7ff.js" crossorigin="anonymous"></script>
     <script src="src/constants.js"></script>
