@@ -25,7 +25,7 @@ const __getFiliais = () => {
 
     loading.start();
 
-    fetch(Constants.PRODUCTION_URL +  "/v1/search", {
+    fetch(Constants.PRODUCTION_URL + "/v1/search", {
         method: "POST",
         body: JSON.stringify(data),
         headers: {
@@ -69,11 +69,12 @@ const __getItens = () => {
             "P.CODIGO",
             "P.CODATK",
             "P.DESCRICAO",
-            "CAST(IFNULL(E.MINIMO, 0) AS DECIMAL(20, 3)) AS MINIMO",
-            "CAST(IFNULL(E.SALDO, 0) AS DECIMAL(20, 3)) AS SALDO",
-            "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 3)) AS SUGESTAO",
-            "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 3)) AS PEDIDO",
-            "A.GRUPO"
+            "CAST(IFNULL(E.MINIMO, 0) AS DECIMAL(20, 0)) AS MINIMO",
+            "CAST(IFNULL(E.SALDO, 0) AS DECIMAL(20, 0)) AS SALDO",
+            "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 0)) AS SUGESTAO",
+            "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 0)) AS PEDIDO",
+            "A.GRUPO",
+            "get_limite_filial('" + companySelector.value + "') AS LIMITE"
         ],
         "search": [
             {
@@ -105,6 +106,10 @@ const __getItens = () => {
     }).then(json => {
         container.innerHTML = '';
         if (json.success) {
+            document.querySelector("#limite-filial").innerHTML = "Limite: " + parseFloat(json.data[0].LIMITE).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+            });
             json.data.forEach(item => {
                 let card = document.createElement('div');
                 card.classList.add('card');
@@ -132,7 +137,7 @@ const __getItens = () => {
 
                 row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sugestao" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Default input" aria-label="default input example" value='${item.PEDIDO}'></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Pedido" aria-label="default input example" value='${item.PEDIDO}'  pattern="[0-9]*" inputmode="numeric" min="0" step="1" onclick="this.select()"></div>`);
 
                 card.appendChild(row);
                 container.appendChild(card);
@@ -147,27 +152,26 @@ const __getItens = () => {
 
 const __save = () => {
     if (companySelector.value == '') return;
-
+    const random_uuid = uuidv4();
     let currentDate = new Date().toJSON().slice(0, 10).replaceAll('-', '');
     let data = [];
     document.querySelectorAll(".sku").forEach(item => {
-        data.push({ 
-            FILIAL: companySelector.value, 
-            DATA: currentDate, 
-            CODIGO: item.getAttribute('data-code'), 
-            PEDIDO: item.querySelector('.pedido').value, 
-            MINIMO: item.querySelector('.minimo').value, 
-            SUGESTAO: item.querySelector('.sugestao').value, 
-            SALDO: item.querySelector('.saldo').value, 
+        data.push({
+            FILIAL: companySelector.value,
+            DATA: currentDate,
+            CODIGO: item.getAttribute('data-code'),
+            PEDIDO: item.querySelector('.pedido').value,
+            MINIMO: item.querySelector('.minimo').value,
+            SUGESTAO: item.querySelector('.sugestao').value,
+            SALDO: item.querySelector('.saldo').value,
+            STATUS: "FINALIZ",
+            IDENTIFICADOR: random_uuid
         });
     })
-    console.log(data);
 
     loading.start();
 
-    let json = [{ area: 'ESTLOJ', data: data }];
-
-    alert(JSON.stringify(json));
+    let json = [{ area: 'ESTLOJ', data: data }, { area: 'LOGATAK', data: [{ DATA: now.date(), HORA: now.time(), RETORNO: "Aguardando Transmissão", IDENTIFICADOR: random_uuid }] }];
 
     fetch(Constants.PRODUCTION_URL + "/v1/template", {
         method: "PUT",
@@ -183,9 +187,9 @@ const __save = () => {
             return response.json()
         })
         .then(json => {
-            alert(json.message)
             console.log(json);
             if (json.success) {
+                alert('Pedido salvo!')
                 history.back();
             }
         })
@@ -193,11 +197,7 @@ const __save = () => {
         .finally(() => loading.complete());
 }
 
-const __main = () => {
-    __getFiliais();
-}
-
 sendButton.addEventListener('click', () => __save());
 companySelector.addEventListener('change', () => __getItens());
 
-__main();
+__getFiliais();
