@@ -1,3 +1,5 @@
+var identificador = null;
+
 const container = document.querySelector("#grid");
 const sendButton = document.querySelector('#sendButton');
 const companySelector = document.querySelector("#filial");
@@ -7,7 +9,8 @@ const __getFiliais = () => {
         "area": "EMPRES",
         "fields": [
             "CODIGO",
-            "ALIAS"
+            "ALIAS",
+            "LST_ATAK"
         ],
         "search": [
             {
@@ -40,7 +43,7 @@ const __getFiliais = () => {
         console.log(json)
         if (json.success) {
             json.data.forEach(item => {
-                document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}">${item.ALIAS}</option>`);
+                document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}" data-lista="${item.LST_ATAK}">${item.ALIAS}</option>`);
             });
         } else {
             alert(json.message)
@@ -51,6 +54,8 @@ const __getFiliais = () => {
 }
 
 const __getItens = () => {
+    const lista = companySelector.options[companySelector.selectedIndex].getAttribute('data-lista');
+    console.log(lista)
     let data = {
         "area": "PRODATAK A",
         "join": [
@@ -62,12 +67,20 @@ const __getItens = () => {
                 "area": "ESTLOJ E",
                 "on": "E.DATA = DATE_FORMAT(CURDATE(), '%Y%m%d') AND E.CODIGO = P.CODIGO AND E.FILIAL = A.FILIAL",
                 "type": "LEFT"
+            },
+            {
+                "area": "TABATAK T",
+                "on": "T.CHAVE = " + lista + " AND T.PRODUTO = P.CODATK",
+                "type": "LEFT"
             }
         ],
         "fields": [
+            "E.IDENTIFICADOR",
             "LPAD(ROW_NUMBER() OVER (ORDER BY A.ORDEM, A.GRUPO, P.DESCRICAO), 3, '0') AS ITEM",
             "P.CODIGO",
             "P.CODATK",
+            "P.QTCAIXA",
+            "IFNULL(IF(T.PRODUTO IN ('4032','3517'), 10, T.VALUNIT), 0) AS VALUNIT",
             "P.DESCRICAO",
             "CAST(IFNULL(E.MINIMO, 0) AS DECIMAL(20, 0)) AS MINIMO",
             "CAST(IFNULL(E.SALDO, 0) AS DECIMAL(20, 0)) AS SALDO",
@@ -110,6 +123,9 @@ const __getItens = () => {
                 style: 'currency',
                 currency: 'BRL',
             });
+
+            identificador = json.data[0].IDENTIFICADOR;
+
             json.data.forEach(item => {
                 let card = document.createElement('div');
                 card.classList.add('card');
@@ -137,22 +153,29 @@ const __getItens = () => {
 
                 row.insertAdjacentHTML('beforeend', `<div class='col'><label>Sugestão</label><input class="form-control sugestao" type="number" placeholder="Default input" aria-label="default input example" value='${item.SUGESTAO}' disabled readonly></div>`);
 
-                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Pedido" aria-label="default input example" value='${item.PEDIDO}'  pattern="[0-9]*" inputmode="numeric" min="0" step="1" onclick="this.select()"></div>`);
+                row.insertAdjacentHTML('beforeend', `<div class='col'><label>Pedido</label><input class="form-control pedido" type="number" placeholder="Pedido" aria-label="default input example" value='${item.PEDIDO}'  pattern="[0-9]*" inputmode="numeric" min="0" step="1" onclick="this.select()" onchange="updateBill()" data-qtcaixa='${item.QTCAIXA}' data-valunit='${item.VALUNIT}'></div>`);
 
                 card.appendChild(row);
                 container.appendChild(card);
             });
+            sendButton.classList.remove('d-none');
         } else {
             alert(json.message)
         }
-    })
-        .catch((error) => alert(error))
-        .finally(() => loading.complete());
+    }).catch((error) => alert(error))
+        .finally(() => {
+            updateBill();
+            loading.complete();
+        });
 }
 
 const __save = () => {
     if (companySelector.value == '') return;
-    const random_uuid = uuidv4();
+
+    if (identificador == null || identificador == '') {
+        identificador = uuidv4();
+    }
+
     let currentDate = new Date().toJSON().slice(0, 10).replaceAll('-', '');
     let data = [];
     document.querySelectorAll(".sku").forEach(item => {
@@ -164,14 +187,14 @@ const __save = () => {
             MINIMO: item.querySelector('.minimo').value,
             SUGESTAO: item.querySelector('.sugestao').value,
             SALDO: item.querySelector('.saldo').value,
-            STATUS: "FINALIZ",
-            IDENTIFICADOR: random_uuid
+            STATUS: "FINALI",
+            IDENTIFICADOR: identificador
         });
     })
 
     loading.start();
 
-    let json = [{ area: 'ESTLOJ', data: data }, { area: 'LOGATAK', data: [{ DATA: now.date(), HORA: now.time(), RETORNO: "Aguardando Transmissão", IDENTIFICADOR: random_uuid }] }];
+    let json = [{ area: 'ESTLOJ', data: data }, { area: 'LOGATAK', data: [{ DATA: now.date(), HORA: now.time(), RETORNO: "Aguardando Transmissão", IDENTIFICADOR: identificador }] }];
 
     fetch(Constants.PRODUCTION_URL + "/v1/template", {
         method: "PUT",
@@ -191,13 +214,48 @@ const __save = () => {
             if (json.success) {
                 alert('Pedido salvo!')
                 history.back();
+            } else {
+                alert(json.message);
             }
         })
         .catch((error) => alert(error))
         .finally(() => loading.complete());
 }
 
-sendButton.addEventListener('click', () => __save());
+
+const updateBill = () => {
+    var totalRS = 0;
+    var totalKG = 0;
+    var totalCX = 0;
+    const items = document.querySelectorAll(".pedido");
+    for (const item of items) {
+        const fator = item.getAttribute('data-qtcaixa') || "0";
+        const valunit = item.getAttribute('data-valunit') || "0";
+
+        totalCX += parseFloat(item.value);
+        totalKG += item.value * parseFloat(fator);
+        totalRS += item.value * parseFloat(fator) * parseFloat(valunit);
+    }
+
+    document.querySelector("#total-caixa").innerHTML = 'Total CX: ' + totalCX.toLocaleString('pt-BR', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    });
+    document.querySelector("#total-quilo").innerHTML = 'Total KG: ' + totalKG.toLocaleString('pt-BR', {
+        minimumFractionDigits: 3,
+        maximumFractionDigits: 3,
+    });
+    document.querySelector("#total-pedido").innerHTML = 'Total R$: ' + totalRS.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+    });
+}
+
+sendButton.addEventListener('click', () => {
+    confirmation.show('Salvar pedido?', 'Confirmação', () => {
+        __save();
+    });
+});
 companySelector.addEventListener('change', () => __getItens());
 
 __getFiliais();
