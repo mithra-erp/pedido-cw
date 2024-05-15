@@ -20,6 +20,11 @@ const __getItens = () => {
                 "area": "TABATAK T",
                 "on": "T.CHAVE = EMPRES.LST_ATAK AND T.PRODUTO = P.CODATK",
                 "type": "LEFT"
+            },
+            {
+                "area": "PRODATAK",
+                "on": "PRODATAK.PRODUTO = P.CODIGO AND PRODATAK.FILIAL = EMPRES.CODIGO",
+                "type": "LEFT"
             }
         ],
         "fields": [
@@ -28,7 +33,7 @@ const __getItens = () => {
             "ESTLOJ.DATA",
             "ESTLOJ.STATUS",
             "ESTLOJ.IDENTIFICADOR",
-            "SUM(ROUND(ESTLOJ.PEDIDO * T.VALUNIT, 2)) AS TOTAL"
+            "SUM(ROUND(ESTLOJ.PEDIDO * IF(IFNULL(PRODATAK.GRUPO, '') NOT IN ('CARCAÇA'), P.QTCAIXA, 0) *  IF(T.PRODUTO IN ('4032','3517'), 10, T.VALUNIT), 2)) AS TOTAL"
         ],
         "search": [
             {

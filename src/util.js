@@ -23,3 +23,27 @@ function parse(str) {
         d = str.substr(6,2);
     return new Date(y,m,d);
 }
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
+    .replace(/[xy]/g, function (c) {
+        const r = Math.random() * 16 | 0, 
+            v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+const now = {
+    date: function () {
+        const currentdate = new Date(); 
+        return currentdate.getFullYear() + 
+                (currentdate.getMonth()+1).toString().padStart(2, '0') +
+                currentdate.getDate().toString().padStart(2, '0');
+    },
+    time: () => {
+        const currentdate = new Date(); 
+        return currentdate.getHours().toString().padStart(2, '0') + ":"  
+                + currentdate.getMinutes().toString().padStart(2, '0') + ":" 
+                + currentdate.getSeconds().toString().padStart(2, '0');
+    }
+}
