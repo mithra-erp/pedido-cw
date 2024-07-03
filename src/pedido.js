@@ -14,14 +14,9 @@ const __getFiliais = () => {
         ],
         "search": [
             {
-                "field": "CODIGO",
-                "operation": "GREATER_OR_EQUAL_THAN",
-                "value": "0101"
-            },
-            {
-                "field": "CODIGO",
-                "operation": "LESS_OR_EQUAL_THAN",
-                "value": "0299"
+                "field": "CODATK",
+                "operation": "DIFFERENT_THAN",
+                "value": ""
             }
         ]
     }
@@ -99,6 +94,11 @@ const __getItens = () => {
                 "field": "P.CODATK",
                 "operation": "DIFFERENT_THAN",
                 "value": ""
+            },
+            {
+                "field": "P.PREFIXO",
+                "operation": "EQUAL_TO",
+                "value": "94"
             }
         ]
     }
