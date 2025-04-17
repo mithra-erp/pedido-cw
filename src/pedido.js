@@ -10,7 +10,8 @@ const __getFiliais = () => {
         "fields": [
             "CODIGO",
             "ALIAS",
-            "LST_ATAK"
+            "LST_ATAK",
+            "get_limite_filial(CODIGO) AS LIMITE"
         ],
         "search": [
             {
@@ -38,7 +39,7 @@ const __getFiliais = () => {
         console.log(json)
         if (json.success) {
             json.data.forEach(item => {
-                document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}" data-lista="${item.LST_ATAK}">${item.ALIAS}</option>`);
+                document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}" data-lista="${item.LST_ATAK}" data-limite="${item.LIMITE}">${item.ALIAS}</option>`);
             });
         } else {
             alert(json.message)
@@ -50,7 +51,8 @@ const __getFiliais = () => {
 
 const __getItens = () => {
     const lista = companySelector.options[companySelector.selectedIndex].getAttribute('data-lista');
-    console.log(lista)
+    const limiteFilial = companySelector.options[companySelector.selectedIndex].getAttribute('data-limite');
+    console.log(limiteFilial)
     let data = {
         "area": "PRODATAK A",
         "join": [
@@ -82,7 +84,9 @@ const __getItens = () => {
             "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 0)) AS SUGESTAO",
             "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 0)) AS PEDIDO",
             "A.GRUPO",
-            "get_limite_filial('" + companySelector.value + "') AS LIMITE"
+            "E.DATAINC",
+            "E.HORAINC",
+            "E.USUINC",
         ],
         "search": [
             {
@@ -119,10 +123,13 @@ const __getItens = () => {
     }).then(json => {
         container.innerHTML = '';
         if (json.success) {
-            document.querySelector("#limite-filial").innerHTML = "Limite: " + parseFloat(json.data[0].LIMITE).toLocaleString('pt-BR', {
+            document.querySelector("#limite-filial").innerHTML = "Limite: " + parseFloat(limiteFilial).toLocaleString('pt-BR', {
                 style: 'currency',
                 currency: 'BRL',
             });
+
+            document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + json.data[0].USUINC;
+            document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + json.data[0].DATAINC + json.data[0].HORAINC;
 
             identificador = json.data[0].IDENTIFICADOR;
 
