@@ -83,7 +83,10 @@ const __getItens = () => {
             "CAST(IFNULL(E.SALDO, 0) AS DECIMAL(20, 0)) AS SALDO",
             "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 0)) AS SUGESTAO",
             "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 0)) AS PEDIDO",
-            "A.GRUPO"
+            "A.GRUPO",
+            "E.DATAINC",
+            "E.HORAINC",
+            "E.USUINC",
         ],
         "search": [
             {
@@ -124,6 +127,9 @@ const __getItens = () => {
                 style: 'currency',
                 currency: 'BRL',
             });
+
+            document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + json.data[0].USUINC;
+            document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + json.data[0].DATAINC + json.data[0].HORAINC;
 
             identificador = json.data[0].IDENTIFICADOR;
 
