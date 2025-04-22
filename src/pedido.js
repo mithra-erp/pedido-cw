@@ -121,6 +121,7 @@ const __getItens = () => {
         console.log(response)
         return response.json()
     }).then(json => {
+        console.log(json)
         container.innerHTML = '';
         if (json.success) {
             document.querySelector("#limite-filial").innerHTML = "Limite: " + parseFloat(limiteFilial).toLocaleString('pt-BR', {
@@ -128,8 +129,19 @@ const __getItens = () => {
                 currency: 'BRL',
             });
 
-            document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + json.data[0].USUINC;
-            document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + json.data[0].DATAINC + json.data[0].HORAINC;
+            let ctrlog = json.data.filter(item => item.USUINC > '')[0];
+
+            if (ctrlog !== undefined) {
+                if (ctrlog.DATAINC == '' && ctrlog.USUINC.substr(-8).isDate()) {
+                    ctrlog.DATAINC = ctrlog.USUINC.substr(-8).toDate();
+                    ctrlog.USUINC = ctrlog.USUINC.substr(0, ctrlog.USUINC.length - 8);
+                } else if (ctrlog.DATAINC != '') {
+                    ctrlog.DATAINC = ctrlog.USUINC.toDate();
+                }
+
+                document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + ctrlog.USUINC.toUpperCase();
+                document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + ctrlog.DATAINC + ctrlog.HORAINC;
+            }
 
             identificador = json.data[0].IDENTIFICADOR;
 
@@ -177,7 +189,7 @@ const __getItens = () => {
 }
 
 const __getPedido = (id) => {
-    
+
     let data = {
         "area": "PRODATAK A",
         "join": [
@@ -247,7 +259,7 @@ const __getPedido = (id) => {
         return response.json()
     }).then(json => {
         container.innerHTML = '';
-        if (json.success) {            
+        if (json.success) {
             companySelector.insertAdjacentHTML('beforeend', `<option value="${json.data[0].CODIGO}">${json.data[0].ALIAS}</option>`);
             companySelector.selectedIndex = 1;
             companySelector.setAttribute('disabled', true);
@@ -290,7 +302,7 @@ const __getPedido = (id) => {
                 card.appendChild(row);
                 container.appendChild(card);
             });
-            
+
         } else {
             alert(json.message)
             history.back();
