@@ -47,3 +47,14 @@ const now = {
                 + currentdate.getSeconds().toString().padStart(2, '0');
     }
 }
+
+String.prototype.toDate = function() {
+    let value = this.substr(6, 2) + '/' + this.substr(4, 2) + '/' + this.substr(0, 4);
+    return value;
+}
+
+String.prototype.isDate = function() {
+    let valid = Date.parse(this.substr(0, 4) + '-' + this.substr(4, 2) + '-' + this.substr(6, 2));
+    if (isNaN(valid)) return false;
+    return true;
+}
