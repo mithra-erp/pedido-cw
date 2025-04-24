@@ -72,7 +72,7 @@ const __getItens = () => {
             },
             {
                 "area": "SENHAS S",
-                "on": "E.USUINC > '' AND E.USUINC LIKE CONCAT(S.USUARIO, '%')",
+                "on": "S.USUARIO > '' AND E.USUINC > '' AND E.USUINC LIKE CONCAT(S.USUARIO, '%')",
                 "type": "LEFT"
             }
         ],
