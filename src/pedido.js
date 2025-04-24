@@ -69,6 +69,11 @@ const __getItens = () => {
                 "area": "TABATAK T",
                 "on": "T.CHAVE = " + lista + " AND T.PRODUTO = P.CODATK",
                 "type": "LEFT"
+            },
+            {
+                "area": "SENHAS S",
+                "on": "E.USUINC > '' AND E.USUINC LIKE CONCAT(S.USUARIO, '%')",
+                "type": "LEFT"
             }
         ],
         "fields": [
@@ -84,9 +89,10 @@ const __getItens = () => {
             "CAST(IFNULL(E.SUGESTAO, 0) AS DECIMAL(20, 0)) AS SUGESTAO",
             "CAST(IFNULL(E.PEDIDO, 0) AS DECIMAL(20, 0)) AS PEDIDO",
             "A.GRUPO",
-            "E.DATAINC",
+            "IFNULL(NULLIF(E.DATAINC, ''), RIGHT(E.USUINC, 8)) AS DATAINC",
             "E.HORAINC",
-            "E.USUINC",
+            "S.USUARIO AS USUINC",
+            "S.NOME",
         ],
         "search": [
             {
@@ -118,7 +124,6 @@ const __getItens = () => {
             "Content-Type": "application/json"
         }
     }).then(response => {
-        console.log(response)
         return response.json()
     }).then(json => {
         console.log(json)
@@ -132,15 +137,17 @@ const __getItens = () => {
             let ctrlog = json.data.filter(item => item.USUINC > '')[0];
 
             if (ctrlog !== undefined) {
+                console.log(ctrlog)
                 if (ctrlog.DATAINC == '' && ctrlog.USUINC.substr(-8).isDate()) {
+                    console.log(ctrlog.DATAINC)
                     ctrlog.DATAINC = ctrlog.USUINC.substr(-8).toDate();
                     ctrlog.USUINC = ctrlog.USUINC.substr(0, ctrlog.USUINC.length - 8);
                 } else if (ctrlog.DATAINC != '') {
-                    ctrlog.DATAINC = ctrlog.USUINC.toDate();
+                    ctrlog.DATAINC = ctrlog.DATAINC.toDate() + ' ' + ctrlog.HORAINC;
                 }
 
-                document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + ctrlog.USUINC.toUpperCase();
-                document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + ctrlog.DATAINC + ctrlog.HORAINC;
+                document.querySelector("#usuario-estoque").innerHTML = 'Estoque por: ' + ctrlog.NOME.toUpperCase();
+                document.querySelector("#data-estoque").innerHTML = 'Registrado em: ' + ctrlog.DATAINC;
             }
 
             identificador = json.data[0].IDENTIFICADOR;
@@ -181,7 +188,10 @@ const __getItens = () => {
         } else {
             alert(json.message)
         }
-    }).catch((error) => alert(error))
+    }).catch((error) => {
+        console.log(error)
+        alert(error)
+    })
         .finally(() => {
             updateBill();
             loading.complete();
