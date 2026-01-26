@@ -209,7 +209,7 @@ const __getPedido = (id) => {
             },
             {
                 "area": "ESTLOJ E",
-                "on": "E.DATA = DATE_FORMAT(CURDATE(), '%Y%m%d') AND E.CODIGO = P.CODIGO AND E.FILIAL = A.FILIAL",
+                "on": "E.CODIGO = P.CODIGO AND E.FILIAL = A.FILIAL",
                 "type": "LEFT"
             },
             {
