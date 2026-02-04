@@ -58,3 +58,11 @@ String.prototype.isDate = function() {
     if (isNaN(valid)) return false;
     return true;
 }
+
+function formatDate(yyyymmdd) {
+
+  return yyyymmdd.replace(
+    /(\d{4})(\d{2})(\d{2})/,
+    '$3/$2/$1'
+  );
+}
