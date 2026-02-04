@@ -1,8 +1,13 @@
 const template = document.querySelector("#card-row-template");
 const dataPedido = document.querySelector("#data-pedido");
 const app = document.querySelector("#app");
+const companies = JSON.parse(sessionStorage.getItem('companies')) || [];
 
-const __main = () => __getItens();
+const __main = () => {
+    let data = JSON.parse(atob(sessionStorage.getItem('access_token').split('.')[1]));
+    sessionStorage.setItem('user_name', data.uId)
+    __getItens();
+}
 
 const __getItens = () => {
     let data = {

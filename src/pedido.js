@@ -1,8 +1,12 @@
 var identificador = null;
+var currentInvoice = null;
+var currentCompany = null;
 
 const container = document.querySelector("#grid");
 const sendButton = document.querySelector('#sendButton');
+const pdfButton = document.querySelector('#pdfButton');
 const companySelector = document.querySelector("#filial");
+const companies = JSON.parse(sessionStorage.getItem('companies')) || [];
 
 const __getFiliais = () => {
     let data = {
@@ -11,6 +15,15 @@ const __getFiliais = () => {
             "CODIGO",
             "ALIAS",
             "LST_ATAK",
+            "ENDERE",
+            "NUMERO",
+            "COMPLEM",
+            "BAIRRO",
+            "CEP",
+            "MUNICIPIO",
+            "FONE",
+            "EMAIL",
+            "FANTAS11",
             "get_limite_filial(CODIGO) AS LIMITE"
         ],
         "search": [
@@ -39,8 +52,10 @@ const __getFiliais = () => {
         console.log(json)
         if (json.success) {
             json.data.forEach(item => {
+                companies.push(item);
                 document.querySelector("#filial").insertAdjacentHTML('beforeend', `<option value="${item.CODIGO}" data-lista="${item.LST_ATAK}" data-limite="${item.LIMITE}">${item.ALIAS}</option>`);
             });
+            sessionStorage.setItem('companies', JSON.stringify(companies));
         } else {
             alert(json.message)
         }
@@ -224,8 +239,9 @@ const __getPedido = (id) => {
             }
         ],
         "fields": [
-            "EMPRES.CODIGO",
+            "EMPRES.CODIGO AS FILIAL",
             "EMPRES.ALIAS",
+            "E.DATA",
             "E.IDENTIFICADOR",
             "LPAD(ROW_NUMBER() OVER (ORDER BY A.ORDEM, A.GRUPO, P.DESCRICAO), 3, '0') AS ITEM",
             "P.CODIGO",
@@ -270,6 +286,10 @@ const __getPedido = (id) => {
     }).then(json => {
         container.innerHTML = '';
         if (json.success) {
+            currentCompany = companies.find(item => item.CODIGO == json.data[0].FILIAL);
+            
+            sessionStorage.setItem('current_company', JSON.stringify(currentCompany));
+            currentInvoice = json.data;
             companySelector.insertAdjacentHTML('beforeend', `<option value="${json.data[0].CODIGO}">${json.data[0].ALIAS}</option>`);
             companySelector.selectedIndex = 1;
             companySelector.setAttribute('disabled', true);
@@ -313,6 +333,8 @@ const __getPedido = (id) => {
                 container.appendChild(card);
             });
 
+            pdfButton.classList.remove('d-none');
+
         } else {
             alert(json.message)
             history.back();
@@ -343,7 +365,10 @@ const __save = () => {
             SUGESTAO: item.querySelector('.sugestao').value,
             SALDO: item.querySelector('.saldo').value,
             STATUS: "FINALI",
-            IDENTIFICADOR: identificador
+            IDENTIFICADOR: identificador,
+            DATAINC: currentDate,
+            HORAINC: new Date().toLocaleTimeString('pt-BR', { hour12: false }),
+            USUINC: sessionStorage.getItem('user_name') || ""
         });
     })
 
@@ -417,10 +442,8 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
 });
 console.log(params);
+__getFiliais();
 if (params !== null && params.id !== undefined && params.id !== null) {
     console.log('id', params.id);
     __getPedido(params.id);
-} else {
-    __getFiliais();
 }
-
