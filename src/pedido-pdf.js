@@ -41,9 +41,12 @@ const __getLog = (id) => {
             console.log(response)
             return response.json()
         }).then(json => {
+            console.log(json)
             if (json.success) {
                 const parsed = JSON.parse(json.data[0].RETORNO);
                 resolve(parsed.numeroDoPedido);
+            } else {
+                resolve("");
             }
         }).catch((error) => reject(null))
     });
@@ -51,7 +54,12 @@ const __getLog = (id) => {
 
 
 const gerarPdf = async () => {
-    const numeroDoPedido = await __getLog(identificador);
+    let numeroDoPedido = ""
+    try {
+        numeroDoPedido = await __getLog(identificador);
+    } catch (error) {
+        console.error("Error fetching pedido number:", error);
+    }
     var doc = new jsPDF()
     doc.setFontSize(9);
 
