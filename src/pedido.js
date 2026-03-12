@@ -284,8 +284,10 @@ const __getPedido = (id) => {
         console.log(response)
         return response.json()
     }).then(json => {
+        console.log(json)
         container.innerHTML = '';
         if (json.success) {
+            document.querySelector("#filial").value = json.data[0].FILIAL;
             currentCompany = companies.find(item => item.CODIGO == json.data[0].FILIAL);
             
             sessionStorage.setItem('current_company', JSON.stringify(currentCompany));
@@ -442,7 +444,7 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
 });
 console.log(params);
-__getFiliais();
+// __getFiliais();
 if (params !== null && params.id !== undefined && params.id !== null) {
     console.log('id', params.id);
     __getPedido(params.id);
